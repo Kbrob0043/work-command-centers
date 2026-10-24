@@ -1,0 +1,14 @@
+{
+  "name": "work-command-center",
+  "version": "1.0.0",
+  "description": "Work Command Center - OneNote for Mac Dashboard & Template System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "open": "open index.html"
+  },
+  "keywords": ["onenote", "dashboard", "portfolio-management", "productivity"],
+  "author": "K.O.",
+  "license": "MIT"
+}

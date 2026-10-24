@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft OneNote Template Exporter • Work Command Center</title>
+  <script src="tailwind.js"></script>
+  <script>
+    if (typeof tailwind === 'undefined') {
+      document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+    }
+  </script>
+  <style>
+    .onenote-preview-box {
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      padding: 28px;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    }
+    .onenote-preview-box [contenteditable="true"]:focus {
+      outline: 2px solid #a855f7;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .copy-btn:active {
+      transform: scale(0.98);
+    }
+    .on-checkbox {
+      cursor: pointer;
+      user-select: none;
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      border: 1.5px solid #475569;
+      border-radius: 2px;
+      margin-right: 6px;
+      vertical-align: middle;
+      text-align: center;
+      line-height: 12px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .on-checkbox.checked {
+      background: #7719aa;
+      border-color: #7719aa;
+      color: white;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased p-6 md:p-10">
+
+  <!-- Header Banner -->
+  <div class="max-w-5xl mx-auto mb-6 bg-[#7719aa] text-white p-6 rounded-xl shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="bg-white/20 px-2 py-0.5 rounded text-xs font-semibold tracking-wider uppercase">Microsoft OneNote Mac Kit</span>
+        <span class="text-xs text-emerald-300 font-medium">● 100% Editable Templates</span>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight">OneNote Templates (Ready to Edit & Paste)</h1>
+      <p class="text-xs text-purple-100 mt-1">Click into any field or table cell below to edit. Click <strong>"Copy for OneNote"</strong>, then press <kbd class="bg-purple-900/80 px-1.5 py-0.5 rounded text-white font-mono">Cmd + V</kbd> inside OneNote for Mac.</p>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a href="downloads/WORK COMMAND CENTER.onepkg" download="WORK COMMAND CENTER.onepkg" class="bg-amber-400 hover:bg-amber-300 text-purple-950 font-bold px-3 py-2 rounded-lg text-xs shadow flex items-center gap-1.5 transition">
+        <span>⬇️ Download .onepkg</span>
+      </a>
+      <a href="downloads/WORK COMMAND CENTER.zip" download="WORK COMMAND CENTER.zip" class="bg-purple-900 hover:bg-purple-950 border border-purple-300/40 text-white font-semibold px-3 py-2 rounded-lg text-xs shadow flex items-center gap-1.5 transition">
+        <span>📁 Download .zip</span>
+      </a>
+      <a href="index.html" class="bg-white text-purple-900 font-semibold px-3 py-2 rounded-lg text-xs shadow hover:bg-purple-50 transition flex items-center gap-1.5">
+        <span>← Dashboard</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Editable Indicator Notice -->
+  <div class="max-w-5xl mx-auto mb-8 bg-purple-50 border border-purple-200 rounded-lg p-3 text-xs text-purple-900 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="text-base">✏️</span>
+      <span><strong>Live Editing Enabled:</strong> You can click anywhere on the text, table headers, cells, and checkboxes below to customize them before copying into OneNote!</span>
+    </div>
+  </div>
+
+  <!-- TEMPLATE 1: PORTFOLIO OVERVIEW -->
+  <section class="max-w-5xl mx-auto mb-10">
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <span class="text-xs font-bold text-purple-700 uppercase tracking-wider">Template 1</span>
+        <h2 class="text-xl font-bold text-slate-900">Portfolio Overview</h2>
+      </div>
+      <button onclick="copyTemplate('tpl-portfolio')" class="copy-btn bg-[#7719aa] hover:bg-[#681596] text-white font-bold text-xs px-4 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+        <span>Copy for OneNote (Cmd+V)</span>
+      </button>
+    </div>
+
+    <!-- The actual HTML container copied to clipboard -->
+    <div id="tpl-portfolio" class="onenote-preview-box">
+      <div style="font-family: 'Segoe UI', -apple-system, Arial, sans-serif; color: #1e293b; line-height: 1.5;">
+        
+        <h1 contenteditable="true" style="font-size: 26px; font-weight: bold; color: #0f172a; margin: 0 0 4px 0; outline: none;">Portfolio Overview</h1>
+        <p contenteditable="true" style="font-size: 13px; color: #64748b; margin: 0 0 24px 0; outline: none;">K.O. &nbsp;|&nbsp; Friday, October 23, 2026</p>
+
+        <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 18px 0 8px 0; outline: none;">This Week’s Priorities</h2>
+        <div style="font-size: 14px; margin-bottom: 24px; line-height: 1.8;">
+          <div style="margin: 3px 0;">☐ &nbsp;<span contenteditable="true" style="outline: none;">Confirm ATMS+ UAT readiness</span></div>
+          <div style="margin: 3px 0;">☐ &nbsp;<span contenteditable="true" style="outline: none;">Resolve FOLAA+ scope questions</span></div>
+          <div style="margin: 3px 0;">☐ &nbsp;<span contenteditable="true" style="outline: none;">Capture GAL approval decisions</span></div>
+        </div>
+
+        <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 18px 0 8px 0; outline: none;">Project Health</h2>
+        <table style="border-collapse: collapse; width: 100%; margin-bottom: 24px; font-size: 13.5px; border: 1px solid #cbd5e1;">
+          <thead>
+            <tr style="background-color: #ede7f6;">
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 25%;">Project</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 25%;">Status</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 35%;">Next milestone</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 15%;">Due</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #2563eb; font-weight: 500; outline: none;">ATMS+</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">🔴 &nbsp;At risk</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">UAT readiness</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 28</td>
+            </tr>
+            <tr>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #2563eb; font-weight: 500; outline: none;">FOLAA+</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">🟢 &nbsp;On track</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Scope review</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 29</td>
+            </tr>
+            <tr>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #2563eb; font-weight: 500; outline: none;">GAL</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">🟡 &nbsp;Waiting</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Sponsor approval</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 30</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 18px 0 8px 0; outline: none;">Open Actions</h2>
+        <table style="border-collapse: collapse; width: 100%; margin-bottom: 24px; font-size: 13.5px; border: 1px solid #cbd5e1;">
+          <thead>
+            <tr style="background-color: #ede7f6;">
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 45%;">Action</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 20%;">Owner</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 15%;">Due</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 20%;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Confirm test coverage</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">K.O.</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 27</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">🟡 &nbsp;Open</td>
+            </tr>
+            <tr>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Review scope changes</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Project lead</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 28</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">⚫ &nbsp;Waiting</td>
+            </tr>
+            <tr>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Publish meeting decisions</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">K.O.</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 26</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">🟡 &nbsp;Open</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 18px 0 8px 0; outline: none;">Decisions & Escalations</h2>
+        <ul style="margin: 0 0 24px 0; padding-left: 20px; font-size: 14px; line-height: 1.8;">
+          <li contenteditable="true" style="outline: none;">ATMS+: confirm release acceptance criteria</li>
+          <li contenteditable="true" style="outline: none;">GAL: follow up on sponsor approval</li>
+        </ul>
+
+        <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 18px 0 8px 0; outline: none;">Quick Links</h2>
+        <p contenteditable="true" style="font-size: 13.5px; color: #2563eb; margin: 0 0 24px 0; outline: none;">
+          <a href="#" style="color: #2563eb; text-decoration: underline;">Meeting template</a> &nbsp;•&nbsp; 
+          <a href="#" style="color: #2563eb; text-decoration: underline;">Decision log</a> &nbsp;•&nbsp; 
+          <a href="#" style="color: #2563eb; text-decoration: underline;">Risk register</a> &nbsp;•&nbsp; 
+          <a href="#" style="color: #2563eb; text-decoration: underline;">Weekly review</a>
+        </p>
+
+        <p contenteditable="true" style="font-size: 11px; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; margin-top: 24px; outline: none;">
+          Proposed OneNote for Mac setup &nbsp;•&nbsp; Sample content &nbsp;•&nbsp; Tables updated manually
+        </p>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMPLATE 2: PROJECT OVERVIEW & SCOPE -->
+  <section class="max-w-5xl mx-auto mb-10">
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <span class="text-xs font-bold text-blue-700 uppercase tracking-wider">Template 2</span>
+        <h2 class="text-xl font-bold text-slate-900">Project Overview & Scope</h2>
+      </div>
+      <button onclick="copyTemplate('tpl-proj-overview')" class="copy-btn bg-[#7719aa] hover:bg-[#681596] text-white font-bold text-xs px-4 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+        <span>Copy for OneNote (Cmd+V)</span>
+      </button>
+    </div>
+
+    <div id="tpl-proj-overview" class="onenote-preview-box">
+      <div style="font-family: 'Segoe UI', -apple-system, Arial, sans-serif; color: #1e293b; line-height: 1.5;">
+        <h1 contenteditable="true" style="font-size: 26px; font-weight: bold; color: #0f172a; margin: 0 0 4px 0; outline: none;">GAL Enhancements • Overview & Scope</h1>
+        <p contenteditable="true" style="font-size: 13px; color: #64748b; margin: 0 0 20px 0; outline: none;">Lead: K.O. &nbsp;|&nbsp; Target Delivery: Q4 2026</p>
+
+        <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 16px 0 8px 0; outline: none;">Executive Summary & Purpose</h2>
+        <p contenteditable="true" style="font-size: 14px; color: #334155; margin-bottom: 20px; line-height: 1.6; outline: none;">
+          Modernize high-volume messaging gateways, integrate real-time compliance validation, and provide automated audit readiness for the core enterprise platform.
+        </p>
+
+        <table style="border-collapse: collapse; width: 100%; margin-bottom: 24px; font-size: 13.5px; border: 1px solid #cbd5e1;">
+          <thead>
+            <tr style="background-color: #ede7f6;">
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 50%;">In-Scope (Deliverables)</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 50%;">Out-of-Scope (Deferred)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td contenteditable="true" style="padding: 10px 12px; border: 1px solid #cbd5e1; vertical-align: top; outline: none;">
+                • Automated integration endpoints & event pipeline<br>
+                • Modernized schema validation & error retry service<br>
+                • RBAC authentication with OAuth2 token validation
+              </td>
+              <td contenteditable="true" style="padding: 10px 12px; border: 1px solid #cbd5e1; vertical-align: top; outline: none;">
+                • Direct mobile app client re-skinning<br>
+                • Multi-region active-active database clustering<br>
+                • Legacy batch FTP file export maintenance
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMPLATE 3: RISKS & ISSUES (RAID) -->
+  <section class="max-w-5xl mx-auto mb-10">
+    <div class="flex items-center justify-between mb-3">
+      <div>
+        <span class="text-xs font-bold text-red-600 uppercase tracking-wider">Template 3</span>
+        <h2 class="text-xl font-bold text-slate-900">Risks & Issues (RAID Log)</h2>
+      </div>
+      <button onclick="copyTemplate('tpl-raid')" class="copy-btn bg-[#7719aa] hover:bg-[#681596] text-white font-bold text-xs px-4 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+        <span>Copy for OneNote (Cmd+V)</span>
+      </button>
+    </div>
+
+    <div id="tpl-raid" class="onenote-preview-box">
+      <div style="font-family: 'Segoe UI', -apple-system, Arial, sans-serif; color: #1e293b; line-height: 1.5;">
+        <h1 contenteditable="true" style="font-size: 26px; font-weight: bold; color: #0f172a; margin: 0 0 4px 0; outline: none;">Risks & Issues Register</h1>
+        <p contenteditable="true" style="font-size: 13px; color: #64748b; margin: 0 0 20px 0; outline: none;">Active RAID log across project deliverables</p>
+
+        <table style="border-collapse: collapse; width: 100%; margin-bottom: 24px; font-size: 13.5px; border: 1px solid #cbd5e1;">
+          <thead>
+            <tr style="background-color: #ede7f6;">
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 12%;">Type</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 35%;">Description</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 15%;">Impact</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 25%;">Mitigation Plan</th>
+              <th contenteditable="true" style="padding: 8px 12px; text-align: left; font-weight: 600; color: #3b0764; border: 1px solid #cbd5e1; width: 13%;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; font-weight: 600; color: #b45309; outline: none;">RISK</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Third-party API rate limits during peak UAT loads</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">High / Med</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Implement in-memory redis cache & request throttling</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">🟡 In progress</td>
+            </tr>
+            <tr>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; font-weight: 600; color: #b91c1c; outline: none;">ISSUE</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Firewall blocking database connection in staging cluster</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Critical / High</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Escalated to SecOps ticket #SEC-8891 for emergency port unlock</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">🔴 Active</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white text-xs px-4 py-3 rounded-lg shadow-2xl flex items-center gap-2 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
+    <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+    </svg>
+    <span id="toastMsg">✓ Copied! Switch to OneNote and press Cmd + V.</span>
+  </div>
+
+  <script>
+    async function copyTemplate(elementId) {
+      const container = document.getElementById(elementId);
+      if (!container) return;
+
+      const htmlContent = `
+        <div style="font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif; color: #1e293b; line-height: 1.5;">
+          ${container.innerHTML}
+        </div>
+      `;
+      const plainText = container.innerText;
+
+      try {
+        const blobHtml = new Blob([htmlContent], { type: "text/html" });
+        const blobText = new Blob([plainText], { type: "text/plain" });
+        const item = new ClipboardItem({
+          "text/html": blobHtml,
+          "text/plain": blobText
+        });
+        await navigator.clipboard.write([item]);
+        showToast("✓ Copied formatted template! Ready to paste (Cmd+V) in OneNote.");
+      } catch (err) {
+        const textarea = document.createElement("textarea");
+        textarea.value = plainText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        showToast("✓ Copied text fallback.");
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toastMsg");
+      toastMsg.innerText = msg;
+      toast.classList.remove("translate-y-24", "opacity-0");
+      setTimeout(() => {
+        toast.classList.add("translate-y-24", "opacity-0");
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

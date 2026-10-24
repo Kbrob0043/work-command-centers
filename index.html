@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work Command Center • Editable OneNote Dashboard</title>
+  <!-- Tailwind CSS: Local bundle first (VPN/offline friendly), with CDN fallback -->
+  <script src="tailwind.js"></script>
+  <script>
+    if (typeof tailwind === 'undefined') {
+      document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+    }
+  </script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            onpurple: {
+              50: '#fbf7fd',
+              100: '#f5ecfc',
+              200: '#ede0fa',
+              300: '#dec2f5',
+              400: '#c595ee',
+              500: '#a865e2',
+              600: '#8e3fd1',
+              700: '#752ab6',
+              800: '#68217a',
+              900: '#521961',
+              ribbon: '#7719aa',
+              dark: '#58167d',
+              light: '#ede7f6',
+              text: '#5c2d91'
+            }
+          },
+          fontFamily: {
+            sans: ['"Segoe UI"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    
+    /* OneNote native table styling */
+    .onenote-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 12px 0 20px 0;
+      font-size: 13.5px;
+      border: 1px solid #cbd5e1;
+    }
+    .onenote-table th {
+      background-color: #ede7f6 !important;
+      color: #3b0764 !important;
+      font-weight: 600;
+      border: 1px solid #cbd5e1 !important;
+      padding: 7px 12px;
+      text-align: left;
+    }
+    .onenote-table td {
+      border: 1px solid #cbd5e1 !important;
+      padding: 7px 12px;
+      color: #1e293b;
+    }
+    .onenote-table tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    /* Editable focus outline */
+    [contenteditable="true"]:focus {
+      outline: 2px solid #a855f7;
+      outline-offset: 2px;
+      border-radius: 3px;
+    }
+    
+    /* Interactive checkbox box */
+    .on-checkbox {
+      user-select: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px;
+      height: 17px;
+      border: 1.5px solid #64748b;
+      border-radius: 3px;
+      font-size: 11px;
+      line-height: 1;
+      font-weight: bold;
+      color: transparent;
+      margin-right: 8px;
+      background: white;
+      transition: all 0.15s;
+    }
+    .on-checkbox.checked {
+      background: #7719aa;
+      border-color: #7719aa;
+      color: white;
+    }
+    .on-checkbox:hover {
+      border-color: #7719aa;
+    }
+
+    /* Status badge pill */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s;
+    }
+    .status-badge:hover {
+      opacity: 0.9;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    /* Table hover controls */
+    .table-row-group:hover .row-action-btn {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-slate-800 antialiased h-screen flex flex-col overflow-hidden select-none">
+
+  <!-- macOS Window Bar + Purple OneNote Header -->
+  <header class="bg-[#7719aa] text-white flex flex-col shadow-sm select-none shrink-0">
+    <!-- Top Bar with Traffic Lights & Search -->
+    <div class="h-10 px-3 flex items-center justify-between text-xs border-b border-purple-800/40">
+      <!-- Left: macOS Traffic Lights -->
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 mr-3">
+          <span class="w-3 h-3 rounded-full bg-[#ff5f56] inline-block shadow-inner hover:opacity-80 cursor-pointer"></span>
+          <span class="w-3 h-3 rounded-full bg-[#ffbd2e] inline-block shadow-inner hover:opacity-80 cursor-pointer"></span>
+          <span class="w-3 h-3 rounded-full bg-[#27c93f] inline-block shadow-inner hover:opacity-80 cursor-pointer"></span>
+        </div>
+        <span class="font-medium text-purple-200 hidden sm:inline">WORK COMMAND CENTER • Fully Editable OneNote Canvas</span>
+      </div>
+
+      <!-- Center: App Title -->
+      <div class="font-semibold text-sm tracking-wide flex items-center gap-1.5">
+        <svg class="w-4 h-4 fill-current text-white opacity-90" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm4-4H6v-2h10v2zm0-4H6V7h10v2z"/>
+        </svg>
+        <span>OneNote</span>
+      </div>
+
+      <!-- Right: Search Bar, Actions & Profile -->
+      <div class="flex items-center gap-2">
+        <div class="relative hidden lg:block">
+          <svg class="w-3.5 h-3.5 text-purple-300 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input type="text" id="globalSearch" placeholder="Search in Notebook" 
+            class="bg-purple-900/60 text-white placeholder-purple-300 text-xs rounded-md pl-8 pr-3 py-1 w-36 focus:outline-none focus:ring-1 focus:ring-purple-300 focus:w-48 transition-all">
+        </div>
+        
+        <!-- One-Click Copy for OneNote -->
+        <button id="copyForOneNoteBtn" title="Copy clean rich-text HTML formatted for Microsoft OneNote" class="bg-amber-400 hover:bg-amber-300 text-purple-950 px-2.5 py-1 rounded text-xs font-bold flex items-center gap-1.5 shadow transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+          </svg>
+          <span>Copy (Cmd+V)</span>
+        </button>
+
+        <!-- Download OneNote Files Dropdown -->
+        <div class="relative">
+          <button id="downloadDropdownBtn" class="bg-purple-900/80 hover:bg-purple-900 border border-purple-400/50 text-white px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+            <svg class="w-3.5 h-3.5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            <span>Download Files</span>
+            <svg class="w-3 h-3 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          
+          <div id="downloadMenu" class="hidden absolute right-0 mt-1.5 w-64 bg-white rounded-lg shadow-2xl border border-gray-200 py-1.5 z-50 text-slate-800 text-xs">
+            <div class="px-3 py-1.5 font-bold text-slate-500 text-[10px] uppercase tracking-wider border-b border-gray-100">
+              Download OneNote Files
+            </div>
+            <a href="downloads/WORK COMMAND CENTER.onepkg" download="WORK COMMAND CENTER.onepkg" class="flex items-start gap-2.5 px-3 py-2 hover:bg-purple-50 transition">
+              <span class="text-base">📦</span>
+              <div>
+                <div class="font-bold text-purple-900">OneNote Package (.onepkg)</div>
+                <div class="text-[10.5px] text-slate-500">Standard OneNote notebook bundle for Windows & converters</div>
+              </div>
+            </a>
+            <a href="downloads/WORK COMMAND CENTER.zip" download="WORK COMMAND CENTER.zip" class="flex items-start gap-2.5 px-3 py-2 hover:bg-purple-50 transition border-t border-gray-50">
+              <span class="text-base">📁</span>
+              <div>
+                <div class="font-bold text-blue-900">Notebook Archive (.zip)</div>
+                <div class="text-[10.5px] text-slate-500">Unzipped structure for OneNote Web Importer to OneDrive</div>
+              </div>
+            </a>
+            <button onclick="downloadCurrentPageHtml()" class="w-full text-left flex items-start gap-2.5 px-3 py-2 hover:bg-purple-50 transition border-t border-gray-50">
+              <span class="text-base">📄</span>
+              <div>
+                <div class="font-bold text-emerald-800">Current Page (.html)</div>
+                <div class="text-[10.5px] text-slate-500">Save active page formatted for OneNote pasting</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Template Link -->
+        <a href="onenote-templates.html" title="Open OneNote Raw Template Viewer" class="bg-white/15 hover:bg-white/25 text-white px-2 py-1 rounded text-xs font-medium hidden sm:flex items-center gap-1">
+          <span>Templates</span>
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+        </a>
+
+        <!-- User profile -->
+        <div class="w-7 h-7 rounded-full bg-purple-900 border border-purple-400/50 flex items-center justify-center font-semibold text-xs text-purple-100" title="User: K.O.">
+          KO
+        </div>
+      </div>
+    </div>
+
+    <!-- Ribbon Tabs -->
+    <div class="flex items-center px-4 space-x-6 text-xs font-medium bg-[#6e159e] pt-1">
+      <button class="pb-1.5 border-b-2 border-white text-white font-semibold">Home</button>
+      <button class="pb-1.5 text-purple-200 hover:text-white transition" onclick="showToast('Home tab active with rich text formatting tools')">Insert</button>
+      <button class="pb-1.5 text-purple-200 hover:text-white transition" onclick="showToast('Draw tools')">Draw</button>
+      <button class="pb-1.5 text-purple-200 hover:text-white transition" onclick="showToast('View tools')">View</button>
+    </div>
+
+    <!-- Working Ribbon Toolbar -->
+    <div class="bg-white text-slate-700 px-3 py-1.5 flex items-center space-x-2 text-xs border-b border-gray-200 overflow-x-auto shadow-xs">
+      <!-- Paste Button -->
+      <button onclick="document.execCommand('paste')" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded text-slate-700" title="Paste">
+        <svg class="w-3.5 h-3.5 text-purple-700" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19 2h-4.18C14.4.84 13.3 0 12 0c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 18H5V4h2v3h10V4h2v16z"/>
+        </svg>
+        <span>Paste</span>
+      </button>
+
+      <div class="h-4 w-px bg-gray-300 mx-1"></div>
+
+      <!-- Font Controls -->
+      <div class="flex items-center gap-1.5">
+        <select onchange="document.execCommand('fontName', false, this.value)" class="border border-gray-300 rounded px-1.5 py-0.5 text-xs text-slate-700 bg-white hover:border-gray-400">
+          <option value="'Segoe UI', sans-serif">Segoe UI</option>
+          <option value="Arial, sans-serif">Arial</option>
+          <option value="Calibri, sans-serif">Calibri</option>
+          <option value="-apple-system, sans-serif">SF Pro</option>
+        </select>
+        <select onchange="document.execCommand('fontSize', false, this.value)" class="border border-gray-300 rounded px-1.5 py-0.5 text-xs text-slate-700 bg-white hover:border-gray-400">
+          <option value="3">14 pt</option>
+          <option value="2">11 pt</option>
+          <option value="4">16 pt</option>
+          <option value="5">18 pt</option>
+          <option value="6">24 pt</option>
+        </select>
+      </div>
+
+      <!-- Formatting -->
+      <div class="flex items-center space-x-0.5">
+        <button onclick="formatDoc('bold')" class="w-6 h-6 flex items-center justify-center font-bold hover:bg-gray-100 rounded text-slate-800" title="Bold (Cmd+B)">B</button>
+        <button onclick="formatDoc('italic')" class="w-6 h-6 flex items-center justify-center italic hover:bg-gray-100 rounded text-slate-800 font-serif" title="Italic (Cmd+I)">I</button>
+        <button onclick="formatDoc('underline')" class="w-6 h-6 flex items-center justify-center underline hover:bg-gray-100 rounded text-slate-800" title="Underline (Cmd+U)">U</button>
+        <button onclick="formatDoc('hiliteColor', '#fef08a')" class="w-6 h-6 flex items-center justify-center hover:bg-yellow-100 rounded font-semibold text-slate-800" title="Highlight Yellow">
+          <span class="bg-yellow-200 px-1 rounded-sm text-[11px]">ab</span>
+        </button>
+        <button onclick="formatDoc('foreColor', '#5c2d91')" class="w-6 h-6 flex items-center justify-center hover:bg-purple-100 rounded font-semibold text-purple-700" title="Font Color (Purple)">A</button>
+      </div>
+
+      <div class="h-4 w-px bg-gray-300 mx-1"></div>
+
+      <!-- List icons -->
+      <div class="flex items-center space-x-1">
+        <button onclick="formatDoc('insertUnorderedList')" class="p-1 hover:bg-gray-100 rounded text-slate-600" title="Bullets">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16M2 6h.01M2 12h.01M2 18h.01"></path></svg>
+        </button>
+        <button onclick="formatDoc('insertOrderedList')" class="p-1 hover:bg-gray-100 rounded text-slate-600" title="Numbering">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 6h13M7 12h13M7 18h13M3 5v2m0 5h2m-2 5h2"></path></svg>
+        </button>
+      </div>
+
+      <div class="h-4 w-px bg-gray-300 mx-1"></div>
+
+      <!-- Styles Dropdown -->
+      <select onchange="formatHeading(this.value); this.selectedIndex=0;" class="border border-gray-300 rounded px-1.5 py-0.5 text-xs text-slate-700 bg-white hover:border-gray-400">
+        <option value="">Styles</option>
+        <option value="h1">Heading 1 (Title)</option>
+        <option value="h2">Heading 2 (Purple Section)</option>
+        <option value="p">Normal Text</option>
+      </select>
+
+      <div class="h-4 w-px bg-gray-300 mx-1"></div>
+
+      <!-- OneNote Tags -->
+      <div class="flex items-center space-x-1.5">
+        <button onclick="insertCheckboxTag()" class="flex items-center gap-1 px-1.5 py-1 hover:bg-gray-100 rounded text-slate-700" title="Insert To Do Checkbox">
+          <span class="w-3.5 h-3.5 border border-purple-700 flex items-center justify-center text-[9px] text-purple-700 font-bold rounded-sm">✓</span>
+          <span class="text-[11px]">To Do Tag</span>
+        </button>
+        <button onclick="insertTagText('★ Important: ')" class="flex items-center gap-1 px-1.5 py-1 hover:bg-gray-100 rounded text-slate-700" title="Important Tag">
+          <span class="text-amber-500 text-xs">★</span>
+          <span class="text-[11px]">Important Tag</span>
+        </button>
+        <button onclick="insertTagText('❓ Question: ')" class="flex items-center gap-1 px-1.5 py-1 hover:bg-gray-100 rounded text-slate-700" title="Question Tag">
+          <span class="text-blue-500 font-bold text-xs">?</span>
+          <span class="text-[11px]">Question Tag</span>
+        </button>
+      </div>
+
+      <div class="h-4 w-px bg-gray-300 mx-1"></div>
+
+      <!-- Table Tools -->
+      <div class="flex items-center space-x-1">
+        <button onclick="insertCustomTable()" class="flex items-center gap-1 px-1.5 py-1 hover:bg-gray-100 rounded text-slate-700" title="Insert OneNote Styled Table">
+          <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M9 3v18M15 3v18M4 3h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z"></path></svg>
+          <span class="text-[11px]">Insert Table</span>
+        </button>
+        <button onclick="addTableRowToActiveTable()" class="flex items-center gap-1 px-1.5 py-1 hover:bg-purple-50 text-purple-700 rounded font-medium" title="Add Row to Table">
+          <span class="font-bold">+</span>
+          <span class="text-[11px]">Add Row</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3-Column Main Workspace -->
+  <div class="flex-1 flex overflow-hidden bg-white">
+    
+    <!-- COLUMN 1: Sections & Section Groups Sidebar -->
+    <aside class="w-64 border-r border-gray-200 bg-[#faf9fc] flex flex-col shrink-0 select-none">
+      <!-- Notebook Selector Header -->
+      <div class="p-3 border-b border-gray-200 flex items-center justify-between text-xs font-semibold text-slate-800">
+        <div class="flex items-center gap-2">
+          <div class="w-5 h-5 rounded bg-purple-700 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+            N
+          </div>
+          <span class="tracking-wide uppercase text-[11px] font-bold text-slate-700">WORK COMMAND CENTER</span>
+        </div>
+        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </div>
+
+      <!-- Navigation Hierarchy Tree -->
+      <div id="sectionsList" class="flex-1 overflow-y-auto p-2 space-y-0.5 text-xs text-slate-700">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Quick Template / Helper Footer -->
+      <div class="p-2 border-t border-gray-200 bg-white/70 text-[11px] flex items-center justify-between text-slate-500">
+        <button id="resetDataBtn" class="hover:text-purple-700 underline text-[10.5px]">Reset Sample Data</button>
+        <span id="saveStatus" class="text-green-600 font-medium text-[10.5px] flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span> Editable & Auto-saved
+        </span>
+      </div>
+    </aside>
+
+    <!-- COLUMN 2: Pages List in Selected Section -->
+    <aside class="w-56 border-r border-gray-200 bg-white flex flex-col shrink-0 select-none">
+      <!-- Section Title & Page Search -->
+      <div class="p-3 border-b border-gray-200 flex items-center justify-between">
+        <span id="currentSectionTitle" class="text-xs font-semibold text-slate-800 truncate">Command Center</span>
+        <span class="text-[10px] text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded font-medium">Pages</span>
+      </div>
+
+      <!-- Pages Scroll List -->
+      <div id="pagesList" class="flex-1 overflow-y-auto p-2 space-y-1 text-xs">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- + Add Page Button -->
+      <div class="p-2.5 border-t border-gray-100">
+        <button id="addPageBtn" class="w-full py-1.5 px-2 rounded hover:bg-purple-50 text-purple-700 font-medium text-xs flex items-center gap-1.5 transition">
+          <span class="text-base leading-none font-bold">+</span>
+          <span>Add Page</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- COLUMN 3: Page Editor / Canvas -->
+    <main class="flex-1 flex flex-col bg-white overflow-hidden relative">
+      
+      <!-- Top Action Ribbon for Page -->
+      <div class="h-9 px-6 border-b border-gray-100 flex items-center justify-between text-xs text-slate-500 bg-slate-50/50 select-none">
+        <div class="flex items-center gap-2">
+          <span id="breadcrumbPath" class="text-slate-400">00 • Command Center / Portfolio Overview</span>
+          <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-medium border border-emerald-200 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live Editable
+          </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="quickCopyTopBtn" class="text-purple-700 hover:text-purple-900 font-bold flex items-center gap-1 bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+            <span>Copy Page (Cmd+C)</span>
+          </button>
+          <span class="text-gray-300">|</span>
+          <button class="text-slate-600 hover:text-slate-900 flex items-center gap-1" onclick="window.print()">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            <span>Print</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Scrollable Canvas Content (Entire container is editable) -->
+      <div id="pageCanvasContainer" class="flex-1 overflow-y-auto px-10 py-8 max-w-5xl">
+        <div id="copyableArea" class="focus:outline-none" style="font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif; color: #1e293b; line-height: 1.5;">
+          <!-- Dynamically rendered and 100% editable -->
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-3 rounded-lg shadow-2xl flex items-center gap-2 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
+    <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+    </svg>
+    <span id="toastMsg">✓ Copied formatted page! Ready to paste (Cmd+V) in OneNote.</span>
+  </div>
+
+  <!-- App Script -->
+  <script>
+    // Initial sample data replicating the screenshot exactly
+    const INITIAL_DATA = {
+      activeSection: "cmd-center",
+      activePage: "portfolio-overview",
+      sections: [
+        {
+          id: "cmd-center",
+          title: "00 • Command Center",
+          icon: "home",
+          color: "purple",
+          pages: [
+            { id: "portfolio-overview", title: "Portfolio Overview", type: "portfolio" },
+            { id: "this-week", title: "This Week", type: "weekly" },
+            { id: "master-actions", title: "Master Action Register", type: "actions" },
+            { id: "waiting-on-others", title: "Waiting on Others", type: "waiting" },
+            { id: "milestones", title: "Milestones & Deadlines", type: "milestones" },
+            { id: "quick-capture", title: "Quick Capture", type: "scratchpad" }
+          ]
+        },
+        {
+          id: "active-projects",
+          title: "01 • Active Projects",
+          isGroup: true,
+          expanded: true,
+          subsections: [
+            {
+              id: "proj-atms",
+              title: "ATMS+ Modernization",
+              color: "pink",
+              pages: [
+                { id: "atms-overview", title: "Overview & Scope", type: "proj-overview" },
+                { id: "atms-uat", title: "Requirements & UAT", type: "proj-uat" }
+              ]
+            },
+            {
+              id: "proj-folaa",
+              title: "FOLAA+ Modernization",
+              color: "blue",
+              pages: [
+                { id: "folaa-overview", title: "Overview & Scope", type: "proj-overview" },
+                { id: "folaa-scope", title: "Scope Review & Changes", type: "generic" }
+              ]
+            },
+            {
+              id: "proj-gal",
+              title: "GAL Enhancements",
+              color: "green",
+              expanded: true,
+              pages: [
+                { id: "gal-overview", title: "Overview & Scope", type: "proj-overview" },
+                { id: "gal-meetings", title: "Meetings & Workshops", type: "proj-meetings" },
+                { id: "gal-actions", title: "Actions & Follow-ups", type: "proj-actions" },
+                { id: "gal-decisions", title: "Decisions & Approvals", type: "proj-decisions" },
+                { id: "gal-risks", title: "Risks & Issues", type: "proj-risks" },
+                { id: "gal-requirements", title: "Requirements & UAT", type: "proj-uat" },
+                { id: "gal-stakeholders", title: "Stakeholders", type: "proj-stakeholders" },
+                { id: "gal-references", title: "Reference & Links", type: "proj-links" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "cross-meetings",
+          title: "02 • Cross-Project Meetings",
+          color: "amber",
+          pages: [
+            { id: "weekly-sync", title: "Weekly Portfolio Sync", type: "meeting" },
+            { id: "steering-comm", title: "Steering Committee", type: "meeting" },
+            { id: "vendor-align", title: "Vendor Alignment", type: "meeting" }
+          ]
+        },
+        {
+          id: "knowledge-templates",
+          title: "03 • Knowledge & Templates",
+          color: "purple",
+          pages: [
+            { id: "tpl-charter", title: "Project Charter Template", type: "generic" },
+            { id: "tpl-meeting", title: "Meeting Notes Template", type: "generic" },
+            { id: "tpl-raid", title: "RAID Log Template", type: "generic" },
+            { id: "tpl-review", title: "Weekly Review Process", type: "generic" }
+          ]
+        },
+        {
+          id: "archive",
+          title: "04 • Archive",
+          color: "gray",
+          pages: [
+            { id: "arch-2025", title: "2025 Completed Milestones", type: "generic" }
+          ]
+        }
+      ],
+      // Stored HTML content for each page id so custom edits are 100% saved!
+      pagesContent: {}
+    };
+
+    let state = JSON.parse(localStorage.getItem("onenote_command_center_v2")) || INITIAL_DATA;
+
+    function saveState() {
+      // Save the innerHTML of current page before saving
+      const copyArea = document.getElementById("copyableArea");
+      if (copyArea && state.activePage) {
+        state.pagesContent[state.activePage] = copyArea.innerHTML;
+      }
+      localStorage.setItem("onenote_command_center_v2", JSON.stringify(state));
+    }
+
+    // Auto-save on typing in copyableArea
+    const copyableContainer = document.getElementById("copyableArea");
+    copyableContainer.addEventListener("input", () => {
+      saveState();
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toastMsg");
+      toastMsg.innerText = msg;
+      toast.classList.remove("translate-y-24", "opacity-0");
+      setTimeout(() => {
+        toast.classList.add("translate-y-24", "opacity-0");
+      }, 3500);
+    }
+
+    // Ribbon formatting functions
+    window.formatDoc = function(cmd, val = null) {
+      document.execCommand(cmd, false, val);
+      saveState();
+    };
+
+    window.formatHeading = function(tag) {
+      if (!tag) return;
+      document.execCommand('formatBlock', false, tag);
+      saveState();
+    };
+
+    window.insertTagText = function(text) {
+      document.execCommand('insertText', false, text);
+      saveState();
+    };
+
+    window.insertCheckboxTag = function() {
+      const html = `<div style="margin: 4px 0;"><span class="on-checkbox" onclick="toggleBox(this)"></span><span contenteditable="true">New action task</span></div>`;
+      document.execCommand('insertHTML', false, html);
+      saveState();
+    };
+
+    window.toggleBox = function(el) {
+      el.classList.toggle("checked");
+      const textSpan = el.nextElementSibling;
+      if (textSpan) {
+        if (el.classList.contains("checked")) {
+          el.innerText = "✓";
+          textSpan.style.textDecoration = "line-through";
+          textSpan.style.color = "#94a3b8";
+        } else {
+          el.innerText = "";
+          textSpan.style.textDecoration = "none";
+          textSpan.style.color = "#1e293b";
+        }
+      }
+      saveState();
+    };
+
+    // Cycle status badge on click: 🔴 At risk -> 🟢 On track -> 🟡 Waiting -> 🔵 Planning -> ✅ Complete
+    window.cycleStatus = function(badgeEl) {
+      const text = badgeEl.innerText.trim();
+      if (text.includes("At risk")) {
+        badgeEl.innerHTML = `<span style="color:#16a34a;">🟢</span> <span>On track</span>`;
+        badgeEl.style.backgroundColor = "#dcfce7";
+        badgeEl.style.color = "#15803d";
+      } else if (text.includes("On track")) {
+        badgeEl.innerHTML = `<span style="color:#ca8a04;">🟡</span> <span>Waiting</span>`;
+        badgeEl.style.backgroundColor = "#fef9c3";
+        badgeEl.style.color = "#854d0e";
+      } else if (text.includes("Waiting")) {
+        badgeEl.innerHTML = `<span style="color:#2563eb;">🔵</span> <span>Planning</span>`;
+        badgeEl.style.backgroundColor = "#dbeafe";
+        badgeEl.style.color = "#1d4ed8";
+      } else if (text.includes("Planning")) {
+        badgeEl.innerHTML = `<span style="color:#16a34a;">✅</span> <span>Complete</span>`;
+        badgeEl.style.backgroundColor = "#dcfce7";
+        badgeEl.style.color = "#15803d";
+      } else {
+        badgeEl.innerHTML = `<span style="color:#dc2626;">🔴</span> <span>At risk</span>`;
+        badgeEl.style.backgroundColor = "#fee2e2";
+        badgeEl.style.color = "#991b1b";
+      }
+      saveState();
+    };
+
+    window.cycleOpenStatus = function(badgeEl) {
+      const text = badgeEl.innerText.trim();
+      if (text.includes("Open")) {
+        badgeEl.innerHTML = `<span>⚫</span> <span>Waiting</span>`;
+        badgeEl.style.backgroundColor = "#f1f5f9";
+        badgeEl.style.color = "#475569";
+      } else if (text.includes("Waiting")) {
+        badgeEl.innerHTML = `<span>🟢</span> <span>Closed</span>`;
+        badgeEl.style.backgroundColor = "#dcfce7";
+        badgeEl.style.color = "#166534";
+      } else {
+        badgeEl.innerHTML = `<span>🟡</span> <span>Open</span>`;
+        badgeEl.style.backgroundColor = "#fef9c3";
+        badgeEl.style.color = "#854d0e";
+      }
+      saveState();
+    };
+
+    // Table operations
+    window.addTableRowToActiveTable = function() {
+      // Find the first or focused table in the page
+      const tables = document.querySelectorAll("#copyableArea table");
+      if (tables.length === 0) {
+        showToast("No table found to add a row.");
+        return;
+      }
+      const table = tables[0];
+      const tbody = table.querySelector("tbody") || table;
+      const cols = table.querySelectorAll("th").length || 4;
+
+      let newRow = document.createElement("tr");
+      let cells = "";
+      for (let i = 0; i < cols; i++) {
+        if (i === 1) {
+          cells += `<td style="padding: 8px 12px; border: 1px solid #cbd5e1;"><span class="status-badge" onclick="cycleStatus(this)" style="background:#fee2e2; color:#991b1b;"><span>🔴</span> <span>At risk</span></span></td>`;
+        } else {
+          cells += `<td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1;">Click to edit</td>`;
+        }
+      }
+      newRow.innerHTML = cells;
+      tbody.appendChild(newRow);
+      saveState();
+      showToast("✓ Added new row to table.");
+    };
+
+    window.insertCustomTable = function() {
+      const html = `
+        <table class="onenote-table" style="border-collapse: collapse; width: 100%; border: 1px solid #cbd5e1; margin: 16px 0;">
+          <thead>
+            <tr style="background-color: #ede7f6;">
+              <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600;">Item</th>
+              <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600;">Owner</th>
+              <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600;">Status</th>
+              <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600;">Due Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1;">Task description</td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1;">Owner Name</td>
+              <td style="padding: 8px 12px; border: 1px solid #cbd5e1;"><span class="status-badge" onclick="cycleStatus(this)" style="background:#dcfce7; color:#15803d;"><span>🟢</span> <span>On track</span></span></td>
+              <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1;">Next Friday</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+      document.execCommand('insertHTML', false, html);
+      saveState();
+    };
+
+    // Render Navigation Sidebar (Column 1)
+    function renderSections() {
+      const container = document.getElementById("sectionsList");
+      container.innerHTML = "";
+
+      state.sections.forEach(sec => {
+        if (sec.isGroup) {
+          const groupEl = document.createElement("div");
+          groupEl.className = "mb-1";
+          
+          const header = document.createElement("div");
+          header.className = "flex items-center gap-1.5 px-2 py-1.5 rounded hover:bg-gray-200/60 cursor-pointer font-medium text-slate-800";
+          header.innerHTML = `
+            <svg class="w-3.5 h-3.5 text-slate-500 transition-transform ${sec.expanded ? 'rotate-90' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+            <span class="text-amber-500">📁</span>
+            <span class="truncate font-semibold">${sec.title}</span>
+          `;
+          header.onclick = () => {
+            sec.expanded = !sec.expanded;
+            renderSections();
+            saveState();
+          };
+          groupEl.appendChild(header);
+
+          if (sec.expanded && sec.subsections) {
+            const subContainer = document.createElement("div");
+            subContainer.className = "ml-4 pl-1 border-l border-gray-200 space-y-0.5 mt-0.5";
+
+            sec.subsections.forEach(sub => {
+              const subEl = document.createElement("div");
+              const isSubActive = state.activeSection === sub.id;
+
+              const subHeader = document.createElement("div");
+              subHeader.className = `flex items-center justify-between px-2 py-1.5 rounded cursor-pointer transition ${
+                isSubActive ? 'bg-[#ede4f6] text-purple-900 font-semibold' : 'hover:bg-gray-100 text-slate-700'
+              }`;
+              
+              subHeader.innerHTML = `
+                <div class="flex items-center gap-1.5 truncate">
+                  <svg class="w-3 h-3 text-slate-400 ${sub.expanded ? 'rotate-90' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                  <span class="${sub.color === 'pink' ? 'text-pink-500' : sub.color === 'blue' ? 'text-blue-500' : 'text-emerald-600'}">📁</span>
+                  <span class="truncate">${sub.title}</span>
+                </div>
+              `;
+
+              subHeader.onclick = () => {
+                state.activeSection = sub.id;
+                sub.expanded = !sub.expanded;
+                if (sub.pages && sub.pages.length > 0) {
+                  state.activePage = sub.pages[0].id;
+                }
+                renderSections();
+                renderPages();
+                renderCanvas();
+                saveState();
+              };
+
+              subEl.appendChild(subHeader);
+
+              if (sub.expanded && sub.pages) {
+                const pagesTree = document.createElement("div");
+                pagesTree.className = "ml-5 pl-1.5 border-l border-gray-200 space-y-0.5 my-0.5";
+
+                sub.pages.forEach(p => {
+                  const isPageActive = state.activePage === p.id;
+                  const item = document.createElement("div");
+                  item.className = `flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer text-[11px] truncate ${
+                    isPageActive ? 'bg-[#e8daf5] text-purple-900 font-semibold' : 'hover:bg-gray-100 text-slate-600'
+                  }`;
+
+                  let iconSvg = "📄";
+                  if (p.title.includes("Meetings")) iconSvg = "👥";
+                  if (p.title.includes("Actions")) iconSvg = "✅";
+                  if (p.title.includes("Decisions")) iconSvg = "⚖️";
+                  if (p.title.includes("Risks")) iconSvg = "⚠️";
+                  if (p.title.includes("Requirements")) iconSvg = "📑";
+                  if (p.title.includes("Stakeholders")) iconSvg = "👥";
+                  if (p.title.includes("Reference")) iconSvg = "🔗";
+
+                  item.innerHTML = `
+                    <span class="text-xs shrink-0">${iconSvg}</span>
+                    <span class="truncate">${p.title}</span>
+                  `;
+
+                  item.onclick = (e) => {
+                    e.stopPropagation();
+                    state.activeSection = sub.id;
+                    state.activePage = p.id;
+                    renderSections();
+                    renderPages();
+                    renderCanvas();
+                    saveState();
+                  };
+
+                  pagesTree.appendChild(item);
+                });
+
+                subEl.appendChild(pagesTree);
+              }
+
+              subContainer.appendChild(subEl);
+            });
+
+            groupEl.appendChild(subContainer);
+          }
+
+          container.appendChild(groupEl);
+        } else {
+          const isSecActive = state.activeSection === sec.id;
+          const secEl = document.createElement("div");
+          secEl.className = `flex items-center gap-2 px-2.5 py-1.5 rounded cursor-pointer transition ${
+            isSecActive 
+              ? 'bg-[#ede4f6] text-purple-900 font-semibold shadow-xs' 
+              : 'hover:bg-gray-200/50 text-slate-700'
+          }`;
+
+          let secIcon = sec.icon === "home" ? "🏠" : "📁";
+
+          secEl.innerHTML = `
+            <span class="text-xs ${isSecActive ? 'text-purple-700' : 'text-slate-500'}">${secIcon}</span>
+            <span class="truncate">${sec.title}</span>
+          `;
+
+          secEl.onclick = () => {
+            state.activeSection = sec.id;
+            if (sec.pages && sec.pages.length > 0) {
+              state.activePage = sec.pages[0].id;
+            }
+            renderSections();
+            renderPages();
+            renderCanvas();
+            saveState();
+          };
+
+          container.appendChild(secEl);
+        }
+      });
+    }
+
+    function getCurrentSection() {
+      for (const s of state.sections) {
+        if (s.id === state.activeSection) return s;
+        if (s.subsections) {
+          for (const sub of s.subsections) {
+            if (sub.id === state.activeSection) return sub;
+          }
+        }
+      }
+      return state.sections[0];
+    }
+
+    function getCurrentPage() {
+      const sec = getCurrentSection();
+      if (!sec || !sec.pages) return null;
+      return sec.pages.find(p => p.id === state.activePage) || sec.pages[0];
+    }
+
+    function renderPages() {
+      const sec = getCurrentSection();
+      const titleEl = document.getElementById("currentSectionTitle");
+      const listEl = document.getElementById("pagesList");
+      
+      titleEl.innerText = sec ? sec.title.replace(/^\d+\s*•\s*/, "") : "Pages";
+      listEl.innerHTML = "";
+
+      if (!sec || !sec.pages || sec.pages.length === 0) {
+        listEl.innerHTML = `<div class="p-3 text-xs text-slate-400 italic">No pages in this section</div>`;
+        return;
+      }
+
+      sec.pages.forEach(p => {
+        const isCurrent = state.activePage === p.id;
+        const pageItem = document.createElement("div");
+        pageItem.className = `group flex items-center justify-between px-2.5 py-2 rounded cursor-pointer transition text-xs ${
+          isCurrent 
+            ? 'bg-[#e8daf5] text-purple-900 font-semibold shadow-xs' 
+            : 'hover:bg-gray-100 text-slate-700'
+        }`;
+
+        let icon = `<svg class="w-3.5 h-3.5 shrink-0 ${isCurrent ? 'text-purple-700' : 'text-slate-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>`;
+
+        pageItem.innerHTML = `
+          <div class="flex items-center gap-2 truncate">
+            ${icon}
+            <span class="truncate">${p.title}</span>
+          </div>
+          <button class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 p-0.5" title="Delete page">×</button>
+        `;
+
+        pageItem.onclick = () => {
+          // Save existing page before switching
+          saveState();
+          state.activePage = p.id;
+          renderPages();
+          renderSections();
+          renderCanvas();
+          saveState();
+        };
+
+        const deleteBtn = pageItem.querySelector("button");
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          if (sec.pages.length <= 1) {
+            alert("A section must contain at least one page.");
+            return;
+          }
+          if (confirm(`Delete page "${p.title}"?`)) {
+            sec.pages = sec.pages.filter(item => item.id !== p.id);
+            if (state.activePage === p.id) {
+              state.activePage = sec.pages[0].id;
+            }
+            renderPages();
+            renderCanvas();
+            saveState();
+          }
+        };
+
+        listEl.appendChild(pageItem);
+      });
+    }
+
+    // Default template builders if no custom edit has been saved
+    function getDefaultPageContent(page) {
+      if (page.id === "portfolio-overview") {
+        return `
+          <!-- Page Title & Metadata -->
+          <div style="margin-bottom: 24px;">
+            <h1 contenteditable="true" style="font-size: 28px; font-weight: bold; color: #0f172a; margin: 0 0 4px 0; outline: none;">Portfolio Overview</h1>
+            <div contenteditable="true" style="font-size: 13px; color: #64748b; font-weight: 500; outline: none;">
+              K.O. &nbsp;|&nbsp; Friday, October 23, 2026
+            </div>
+          </div>
+
+          <!-- This Week's Priorities -->
+          <div style="margin-bottom: 28px;">
+            <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 0 0 10px 0; outline: none;">This Week’s Priorities</h2>
+            <div style="font-size: 14px; line-height: 1.8;">
+              <div style="display: flex; align-items: center; margin: 4px 0;">
+                <span class="on-checkbox" onclick="toggleBox(this)"></span>
+                <span contenteditable="true" style="outline: none;">Confirm ATMS+ UAT readiness</span>
+              </div>
+              <div style="display: flex; align-items: center; margin: 4px 0;">
+                <span class="on-checkbox" onclick="toggleBox(this)"></span>
+                <span contenteditable="true" style="outline: none;">Resolve FOLAA+ scope questions</span>
+              </div>
+              <div style="display: flex; align-items: center; margin: 4px 0;">
+                <span class="on-checkbox" onclick="toggleBox(this)"></span>
+                <span contenteditable="true" style="outline: none;">Capture GAL approval decisions</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project Health Table -->
+          <div style="margin-bottom: 28px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 0; outline: none;">Project Health</h2>
+              <button onclick="addHealthRow()" class="text-xs text-purple-700 hover:text-purple-900 font-medium px-2 py-1 bg-purple-50 rounded select-none">+ Add Project</button>
+            </div>
+            <table class="onenote-table" id="healthTable" style="border-collapse: collapse; width: 100%; border: 1px solid #cbd5e1; font-size: 13.5px;">
+              <thead>
+                <tr style="background-color: #ede7f6;">
+                  <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600; width: 25%; text-align: left;">Project</th>
+                  <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600; width: 25%; text-align: left;">Status</th>
+                  <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600; width: 35%; text-align: left;">Next milestone</th>
+                  <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600; width: 15%; text-align: left;">Due</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #2563eb; font-weight: 500; outline: none;">ATMS+</td>
+                  <td style="padding: 8px 12px; border: 1px solid #cbd5e1;">
+                    <span class="status-badge" onclick="cycleStatus(this)" style="background:#fee2e2; color:#991b1b;">
+                      <span>🔴</span> <span>At risk</span>
+                    </span>
+                  </td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">UAT readiness</td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 28</td>
+                </tr>
+                <tr>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #2563eb; font-weight: 500; outline: none;">FOLAA+</td>
+                  <td style="padding: 8px 12px; border: 1px solid #cbd5e1;">
+                    <span class="status-badge" onclick="cycleStatus(this)" style="background:#dcfce7; color:#15803d;">
+                      <span>🟢</span> <span>On track</span>
+                    </span>
+                  </td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Scope review</td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 29</td>
+                </tr>
+                <tr>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #2563eb; font-weight: 500; outline: none;">GAL</td>
+                  <td style="padding: 8px 12px; border: 1px solid #cbd5e1;">
+                    <span class="status-badge" onclick="cycleStatus(this)" style="background:#fef9c3; color:#854d0e;">
+                      <span>🟡</span> <span>Waiting</span>
+                    </span>
+                  </td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Sponsor approval</td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 30</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Open Actions Table -->
+          <div style="margin-bottom: 28px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 0; outline: none;">Open Actions</h2>
+              <button onclick="addActionRow()" class="text-xs text-purple-700 hover:text-purple-900 font-medium px-2 py-1 bg-purple-50 rounded select-none">+ Add Action</button>
+            </div>
+            <table class="onenote-table" id="actionsTable" style="border-collapse: collapse; width: 100%; border: 1px solid #cbd5e1; font-size: 13.5px;">
+              <thead>
+                <tr style="background-color: #ede7f6;">
+                  <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600; width: 45%; text-align: left;">Action</th>
+                  <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600; width: 20%; text-align: left;">Owner</th>
+                  <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600; width: 15%; text-align: left;">Due</th>
+                  <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600; width: 20%; text-align: left;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Confirm test coverage</td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">K.O.</td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 27</td>
+                  <td style="padding: 8px 12px; border: 1px solid #cbd5e1;">
+                    <span class="status-badge" onclick="cycleOpenStatus(this)" style="background:#fef9c3; color:#854d0e;">
+                      <span>🟡</span> <span>Open</span>
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Review scope changes</td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Project lead</td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 28</td>
+                  <td style="padding: 8px 12px; border: 1px solid #cbd5e1;">
+                    <span class="status-badge" onclick="cycleOpenStatus(this)" style="background:#f1f5f9; color:#475569;">
+                      <span>⚫</span> <span>Waiting</span>
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Publish meeting decisions</td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">K.O.</td>
+                  <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Oct 26</td>
+                  <td style="padding: 8px 12px; border: 1px solid #cbd5e1;">
+                    <span class="status-badge" onclick="cycleOpenStatus(this)" style="background:#fef9c3; color:#854d0e;">
+                      <span>🟡</span> <span>Open</span>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Decisions & Escalations -->
+          <div style="margin-bottom: 28px;">
+            <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 0 0 8px 0; outline: none;">Decisions & Escalations</h2>
+            <ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.8;">
+              <li contenteditable="true" style="outline: none;">ATMS+: confirm release acceptance criteria</li>
+              <li contenteditable="true" style="outline: none;">GAL: follow up on sponsor approval</li>
+            </ul>
+          </div>
+
+          <!-- Quick Links -->
+          <div style="margin-bottom: 28px;">
+            <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 0 0 8px 0; outline: none;">Quick Links</h2>
+            <div contenteditable="true" style="font-size: 13.5px; color: #2563eb; outline: none;">
+              <span style="text-decoration: underline; cursor: pointer;">Meeting template</span> &nbsp;•&nbsp;
+              <span style="text-decoration: underline; cursor: pointer;">Decision log</span> &nbsp;•&nbsp;
+              <span style="text-decoration: underline; cursor: pointer;">Risk register</span> &nbsp;•&nbsp;
+              <span style="text-decoration: underline; cursor: pointer;">Weekly review</span>
+            </div>
+          </div>
+
+          <!-- Footer note -->
+          <div contenteditable="true" style="font-size: 11px; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; margin-top: 32px; outline: none;">
+            Proposed OneNote for Mac setup &nbsp;•&nbsp; Sample content &nbsp;•&nbsp; Tables updated manually
+          </div>
+        `;
+      } else if (page.type === "proj-overview") {
+        return `
+          <div style="margin-bottom: 24px;">
+            <h1 contenteditable="true" style="font-size: 28px; font-weight: bold; color: #0f172a; margin: 0 0 4px 0; outline: none;">${page.title}</h1>
+            <div contenteditable="true" style="font-size: 13px; color: #64748b; outline: none;">Project Charter & Scope Baseline • Lead: K.O.</div>
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 0 0 8px 0; outline: none;">Executive Summary</h2>
+            <p contenteditable="true" style="font-size: 14px; color: #334155; line-height: 1.6; outline: none;">
+              This initiative delivers modern, highly available integration microservices and streamlined interfaces to enhance performance, ensure strict compliance with modern security standards, and eliminate technical debt.
+            </p>
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 0 0 8px 0; outline: none;">Scope Breakdown</h2>
+            <table class="onenote-table" style="border-collapse: collapse; width: 100%; border: 1px solid #cbd5e1; font-size: 13.5px;">
+              <thead>
+                <tr style="background-color: #ede7f6;">
+                  <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600; width: 50%; text-align: left;">In-Scope</th>
+                  <th contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #3b0764; font-weight: 600; width: 50%; text-align: left;">Out-of-Scope (Deferred)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td contenteditable="true" style="padding: 10px 12px; border: 1px solid #cbd5e1; vertical-align: top; outline: none;">
+                    • Automated schema migration & validation pipeline<br>
+                    • Real-time webhook notification dispatch service<br>
+                    • Role-based access control (RBAC) alignment
+                  </td>
+                  <td contenteditable="true" style="padding: 10px 12px; border: 1px solid #cbd5e1; vertical-align: top; outline: none;">
+                    • Legacy batch FTP ETL redesign<br>
+                    • Direct customer mobile UI integration<br>
+                    • Multi-region geo-replication
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else {
+        return `
+          <div style="margin-bottom: 24px;">
+            <h1 contenteditable="true" style="font-size: 28px; font-weight: bold; color: #0f172a; margin: 0 0 4px 0; outline: none;">${page.title}</h1>
+            <div contenteditable="true" style="font-size: 13px; color: #64748b; outline: none;">Work Command Center • Ready to edit and copy into OneNote</div>
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <h2 contenteditable="true" style="font-size: 18px; font-weight: bold; color: #5c2d91; margin: 0 0 8px 0; outline: none;">Notes & Content</h2>
+            <div contenteditable="true" style="padding: 12px; border: 1px dashed #cbd5e1; background: #fafafa; border-radius: 4px; min-height: 140px; font-size: 14px; outline: none;">
+              Click here to write notes, add bullets, or insert tables using the ribbon above. Everything you write is auto-saved and ready to paste directly into Microsoft OneNote.
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Render Canvas
+    function renderCanvas() {
+      const page = getCurrentPage();
+      const sec = getCurrentSection();
+      const breadcrumb = document.getElementById("breadcrumbPath");
+      const copyArea = document.getElementById("copyableArea");
+
+      if (!page) {
+        copyArea.innerHTML = `<div class="p-8 text-center text-gray-400">Select or add a page</div>`;
+        return;
+      }
+
+      breadcrumb.innerText = `${sec ? sec.title : ''} / ${page.title}`;
+
+      // Check if user previously edited and saved content for this page
+      if (state.pagesContent && state.pagesContent[page.id]) {
+        copyArea.innerHTML = state.pagesContent[page.id];
+      } else {
+        copyArea.innerHTML = getDefaultPageContent(page);
+      }
+    }
+
+    // Add Row Helpers
+    window.addHealthRow = function() {
+      const tbody = document.querySelector("#healthTable tbody");
+      if (!tbody) return;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; color: #2563eb; font-weight: 500; outline: none;">New Project</td>
+        <td style="padding: 8px 12px; border: 1px solid #cbd5e1;">
+          <span class="status-badge" onclick="cycleStatus(this)" style="background:#fee2e2; color:#991b1b;">
+            <span>🔴</span> <span>At risk</span>
+          </span>
+        </td>
+        <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Milestone name</td>
+        <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Due date</td>
+      `;
+      tbody.appendChild(tr);
+      saveState();
+    };
+
+    window.addActionRow = function() {
+      const tbody = document.querySelector("#actionsTable tbody");
+      if (!tbody) return;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">New action description</td>
+        <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Owner</td>
+        <td contenteditable="true" style="padding: 8px 12px; border: 1px solid #cbd5e1; outline: none;">Due date</td>
+        <td style="padding: 8px 12px; border: 1px solid #cbd5e1;">
+          <span class="status-badge" onclick="cycleOpenStatus(this)" style="background:#fef9c3; color:#854d0e;">
+            <span>🟡</span> <span>Open</span>
+          </span>
+        </td>
+      `;
+      tbody.appendChild(tr);
+      saveState();
+    };
+
+    // Clean Export for OneNote Clipboard
+    async function copyCurrentPageToClipboard() {
+      saveState();
+      const copyArea = document.getElementById("copyableArea");
+      if (!copyArea) return;
+
+      // Clone DOM to clean out temporary interactive controls for clean OneNote paste
+      const clone = copyArea.cloneNode(true);
+      
+      // Clean up buttons
+      clone.querySelectorAll("button").forEach(b => b.remove());
+      
+      // Clean checkboxes: convert interactive span to ballot box character
+      clone.querySelectorAll(".on-checkbox").forEach(box => {
+        const isChecked = box.classList.contains("checked") || box.innerText.includes("✓");
+        const span = document.createElement("span");
+        span.style.fontFamily = "Segoe UI Symbol, Apple Symbols, Arial";
+        span.style.marginRight = "6px";
+        span.style.fontSize = "14px";
+        span.innerText = isChecked ? "☑ " : "☐ ";
+        box.parentNode.replaceChild(span, box);
+      });
+
+      // Clean status badges to native styled spans
+      clone.querySelectorAll(".status-badge").forEach(badge => {
+        badge.removeAttribute("onclick");
+        badge.style.display = "inline";
+        badge.style.padding = "2px 6px";
+        badge.style.borderRadius = "4px";
+      });
+
+      // Wrap in OneNote clean container
+      const finalHtml = `
+        <div style="font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif; color: #1e293b; line-height: 1.5;">
+          ${clone.innerHTML}
+        </div>
+      `;
+      const plainText = clone.innerText;
+
+      try {
+        const blobHtml = new Blob([finalHtml], { type: "text/html" });
+        const blobText = new Blob([plainText], { type: "text/plain" });
+        const item = new ClipboardItem({
+          "text/html": blobHtml,
+          "text/plain": blobText
+        });
+        await navigator.clipboard.write([item]);
+        showToast("✓ Copied for OneNote! Switch to OneNote and press Cmd + V.");
+      } catch (err) {
+        // Fallback
+        const textarea = document.createElement("textarea");
+        textarea.value = plainText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        showToast("✓ Text copied to clipboard!");
+      }
+    }
+
+    // Download menu toggle & helper
+    const dlBtn = document.getElementById("downloadDropdownBtn");
+    const dlMenu = document.getElementById("downloadMenu");
+    if (dlBtn && dlMenu) {
+      dlBtn.onclick = function(e) {
+        e.stopPropagation();
+        dlMenu.classList.toggle("hidden");
+      };
+      document.addEventListener("click", () => {
+        dlMenu.classList.add("hidden");
+      });
+    }
+
+    window.downloadCurrentPageHtml = function() {
+      const page = getCurrentPage();
+      const copyArea = document.getElementById("copyableArea");
+      if (!copyArea) return;
+      const title = page ? page.title : "OneNote-Page";
+      const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${title}</title>
+</head>
+<body style="font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif; color: #1e293b; line-height: 1.5; max-width: 900px; margin: 30px auto; padding: 20px;">
+  ${copyArea.innerHTML}
+</body>
+</html>`;
+      const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${title}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast(`✓ Downloaded ${title}.html`);
+    };
+
+    // Event listeners
+    document.getElementById("copyForOneNoteBtn").onclick = copyCurrentPageToClipboard;
+    document.getElementById("quickCopyTopBtn").onclick = copyCurrentPageToClipboard;
+
+    document.getElementById("addPageBtn").onclick = function() {
+      const sec = getCurrentSection();
+      if (!sec) return;
+      const title = prompt("Enter title for new page in " + sec.title + ":");
+      if (title && title.trim()) {
+        const newId = "page-" + Date.now();
+        if (!sec.pages) sec.pages = [];
+        sec.pages.push({
+          id: newId,
+          title: title.trim(),
+          type: "generic"
+        });
+        state.activePage = newId;
+        renderPages();
+        renderCanvas();
+        saveState();
+        showToast(`Created page "${title.trim()}"`);
+      }
+    };
+
+    document.getElementById("resetDataBtn").onclick = function() {
+      if (confirm("Reset all changes back to the original sample content?")) {
+        localStorage.removeItem("onenote_command_center_v2");
+        state = JSON.parse(JSON.stringify(INITIAL_DATA));
+        renderSections();
+        renderPages();
+        renderCanvas();
+        showToast("Reset to sample data.");
+      }
+    };
+
+    // Filter pages on search input
+    document.getElementById("globalSearch").oninput = function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      const listEl = document.getElementById("pagesList");
+      const items = listEl.querySelectorAll("div.group");
+      items.forEach(item => {
+        const text = item.innerText.toLowerCase();
+        if (!query || text.includes(query)) {
+          item.style.display = "flex";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    };
+
+    // Initialize
+    renderSections();
+    renderPages();
+    renderCanvas();
+  </script>
+</body>
+</html>
